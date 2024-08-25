@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model appsec {
+  id          Int         @id @default(autoincrement())
+  name        String
+  type        appsec_type
+  number      Int
+  description String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime
+  url         String      @default("")
+  directory   String      @default("")
+  roles       role[]      @relation("roleapps")
+}
+
+model role {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique(map: "Role_name_key")
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  appsec      appsec[] @relation("roleapps")
+  users       user[]   @relation("userroles")
+}
+
+model user {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique(map: "User_name_key")
+  email     String   @unique(map: "User_email_key")
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  roles     role[]   @relation("userroles")
+}
+
+enum appsec_type {
+  I
+  M
+  R
+  P
+  O
+}
